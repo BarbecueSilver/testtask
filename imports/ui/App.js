@@ -1,14 +1,15 @@
 import React, { Component } from 'react';
 import { withTracker } from 'meteor/react-meteor-data';
 
-import { Chats } from '../api/chats.js';
+import { Chats, Messages } from '../api/chats.js';
 import Chat from './Chat.js';
 
 import { BrowserRouter } from 'react-router-dom'
 import { Link, Switch, Route } from 'react-router-dom'
 import ReactDOM from 'react-dom';
+import Timestamp from 'react-timestamp';
 
-
+// Routing
 class App extends Component {
     render() {
         return (
@@ -54,6 +55,7 @@ class Main extends Component {
     }
 }
 
+// Components
 class NoChatRoom extends Component {
     render() {
         return <div>Please select a chat.</div>
@@ -83,12 +85,25 @@ class ChatRoom extends Component {
                     <div>
                         <h1>{chat.title}</h1>
                         <div>
-                            <textarea name="chatHistory"
-                                      value={chat.messages}
-                                      readOnly={true}/>
+                            <ul>
+                                {
+                                    Messages.find({
+                                        chatId : id
+                                    }).fetch().map(message => (
+                                        <li key={message._id}>
+                                            <Timestamp time={message.createdAt} autoUpdate/>
+                                             &nbsp;|&nbsp;
+                                            {message.content}
+                                        </li>
+                                    ))
+                                }
+                            </ul>
+                        </div>
+                        <div>
                             <input name="messageDraft"
                                    type="text"
                                    ref="messageDraft"
+                                   onKeyPress={this.handleKeyPress.bind(this)}
                                    placeholder="Type your message here ..."/>
                             <button onClick={this.sendMessage.bind(this)}>
                                 Send
@@ -100,19 +115,35 @@ class ChatRoom extends Component {
         }
     }
 
+    handleKeyPress(event) {
+        if (event.key === 'Enter') {
+            this.sendMessage();
+        }
+    }
+
     sendMessage() {
         // Arrange
-        const messageToSend = ReactDOM.findDOMNode(this.refs.messageDraft).value.trim();
-        let id = this.getChatId();
+        const message = ReactDOM.findDOMNode(this.refs.messageDraft).value.trim();
+        let chatId = this.getChatId();
+        const timestamp = new Date();
 
         // Act
-        Chats.update(id, { $set: { messages: messageToSend }});
-        ReactDOM.findDOMNode(this.refs.messageDraft).value = '';
+        if (!_.isEmpty(message))
+        {
+            Messages.insert({
+                content   : message,
+                chatId    : chatId,
+                createdAt : timestamp
+            });
+
+            ReactDOM.findDOMNode(this.refs.messageDraft).value = '';
+        }
     }
 }
 
 export default withTracker(() => {
     return {
         chats: Chats.find({}).fetch(),
+        messages: Messages.find({}).fetch(),
     };
 })(App);
