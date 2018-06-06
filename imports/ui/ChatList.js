@@ -4,28 +4,78 @@ import Chat from "./Chat.js";
 import { Meteor } from "meteor/meteor";
 import ReactDOM from "react-dom";
 
+import Button from "@material-ui/core/Button";
+import TextField from "@material-ui/core/TextField";
+import SwipeableDrawer from "@material-ui/core/SwipeableDrawer";
+import MenuItem from "@material-ui/core/MenuItem";
+import MenuList from "@material-ui/core/MenuList";
+import { NavLink } from "react-router-dom";
+
 export default class ChatList extends Component {
+  state = {
+    isOpen: false,
+    chatToJoin: ""
+  };
+
+  toggleDrawer = open => () => {
+    this.setState({
+      isOpen: open
+    });
+  };
+
+  handleChange = name => event => {
+    this.setState({
+      [name]: event.target.value
+    });
+  };
+
   render() {
+    const { classes } = this.props;
+
+    const sideList = (
+      <div>
+        <div>
+          <TextField
+            id="chatToJoin"
+            label="Chatname"
+            value={this.state.name}
+            onChange={this.handleChange("chatToJoin")}
+            margin="normal"
+          />
+          <Button
+            variant="contained"
+            color="primary"
+            size="small"
+            onClick={this.handleJoinChat.bind(this)}
+          >
+            Join
+          </Button>
+        </div>
+        <MenuList>
+          {Chats.find({})
+            .fetch()
+            .map(chat => (
+              <MenuItem key={chat._id}>
+                <NavLink to={`/chats/${chat._id}`}>{chat.title}</NavLink>
+              </MenuItem>
+            ))}
+        </MenuList>
+      </div>
+    );
+
     return (
       <header>
-        <h1>Available Chats</h1>
-        <div>
-          <input
-            name="chatName"
-            type="text"
-            ref="chatName"
-            onKeyPress={this.handleKeyPress.bind(this)}
-            placeholder="Chat name ..."
-          />
-          <button onClick={this.handleJoinChat.bind(this)}>Join</button>
-        </div>
-        <div>
-          <ul>
-            {Chats.find({})
-              .fetch()
-              .map(chat => <Chat key={chat._id} chat={chat} />)}
-          </ul>
-        </div>
+        <Button onClick={this.toggleDrawer(true)}>Open Left</Button>
+
+        <SwipeableDrawer
+          open={this.state.isOpen}
+          onClose={this.toggleDrawer(false)}
+          onOpen={this.toggleDrawer(true)}
+        >
+          <div tabIndex={0} role="button">
+            {sideList}
+          </div>
+        </SwipeableDrawer>
       </header>
     );
   }
