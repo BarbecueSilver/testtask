@@ -14,7 +14,7 @@ import { NavLink } from "react-router-dom";
 export default class ChatList extends Component {
   state = {
     isOpen: false,
-    chatToJoin: ""
+    chatNameToJoin: ""
   };
 
   toggleDrawer = open => () => {
@@ -30,29 +30,28 @@ export default class ChatList extends Component {
   };
 
   render() {
-    const { classes } = this.props;
-
     const sideList = (
       <div>
         <div>
           <TextField
-            id="chatToJoin"
+            id="chatNameToJoin"
             label="Chatname"
             value={this.state.name}
-            onChange={this.handleChange("chatToJoin")}
+            onChange={this.handleChange("chatNameToJoin")}
+            onKeyPress={this.handleKeyPress}
             margin="normal"
           />
           <Button
             variant="contained"
             color="primary"
             size="small"
-            onClick={this.handleJoinChat.bind(this)}
+            onClick={this.handleJoinChat}
           >
             Join
           </Button>
         </div>
         <MenuList>
-          {Chats.find({})
+          {Chats.find({ users: Meteor.userId() })
             .fetch()
             .map(chat => (
               <MenuItem key={chat._id}>
@@ -86,49 +85,37 @@ export default class ChatList extends Component {
     }
   }
 
-  handleJoinChat() {
+  handleJoinChat = () => {
     // Arrange
     const userId = Meteor.userId();
-    const chatNameToJoin = ReactDOM.findDOMNode(
-      this.refs.chatName
-    ).value.trim();
+    const chatNameToJoin = this.state.chatNameToJoin;
 
-    // Check if given name is valid
-    if (!_.isEmpty(chatRoomNameToJoin)) {
-      // Find chat with given name
-      let chatToJoin = Chats.findOne({ title: chatNameToJoin }).fetch();
-
-      // If chat exists, join
-      if (chatToJoin) {
-        chatToJoin.users;
-
-        Chats.update(chatId, {
-          $set: { users: !this.checked }
-        });
-        // Otherwise, create new chat
-      } else {
-      }
-
-      // If empty -> create chat
-      // Otherwise -> join chat
-      const chatId = this.getChatId();
-    }
-
-    Chats.update(chatId, {
-      $set: { checked: !this.checked }
-    });
+    console.log("chatNameToJoin is " + chatNameToJoin);
 
     // Act
-    if (!_.isEmpty(message)) {
-      Messages.insert({
-        content: message,
-        chatId: chatId,
-        createdAt: timestamp,
-        owner: Meteor.userId(),
-        username: Meteor.user().username
-      });
-
-      ReactDOM.findDOMNode(this.refs.messageDraft).value = "";
+    // If given name is valid
+    if (!_.isEmpty(chatNameToJoin)) {
+      this.joinChat(chatNameToJoin, userId);
     }
-  }
+  };
+
+  joinChat = (chatNameToJoin, userId) => {
+    // Find chat with given name
+    var chatToJoin = Chats.findOne({ title: chatNameToJoin });
+
+    // If chat exists, join
+    if (chatToJoin) {
+      if (!chatToJoin.users.includes(userId)) {
+        Chats.update(chatId, {
+          $set: { users: chatToJoin.users.push(userId) }
+        });
+      }
+      // Otherwise, create new chat
+    } else {
+      Chats.insert({
+        title: chatNameToJoin,
+        users: [userId]
+      });
+    }
+  };
 }

@@ -1,12 +1,13 @@
 import { Meteor } from "meteor/meteor";
-import ReactDOM from "react-dom";
 import { Chats, Messages } from "../api/chats";
 import React, { Component } from "react";
-import Timestamp from "react-timestamp"; // Moment JS?
-
-// https://material-ui.com/
+import Timestamp from "react-timestamp";
 
 export default class ChatRoom extends Component {
+  state = {
+    messageDraft: ""
+  };
+
   getChatId() {
     return this.props.match.params.chatId;
   }
@@ -28,9 +29,7 @@ export default class ChatRoom extends Component {
             <h1>{chat.title}</h1>
             <div>
               <ul>
-                {Messages.find({
-                  chatId: id
-                })
+                {Messages.find({ chatId: id })
                   .fetch()
                   .map(message => (
                     <li key={message._id}>
@@ -48,10 +47,12 @@ export default class ChatRoom extends Component {
                 name="messageDraft"
                 type="text"
                 ref="messageDraft"
-                onKeyPress={this.handleKeyPress.bind(this)}
+                value={this.state.messageDraft}
+                onKeyPress={this.handleKeyPress}
+                onChange={this.handleChange("messageDraft")}
                 placeholder="Type your message here ..."
               />
-              <button onClick={this.sendMessage.bind(this)}>Send</button>
+              <button onClick={this.sendMessage}>Send</button>
             </div>
           </div>
         </main>
@@ -59,16 +60,22 @@ export default class ChatRoom extends Component {
     }
   }
 
-  handleKeyPress(event) {
+  handleKeyPress = event => {
     if (event.key === "Enter") {
       this.sendMessage();
     }
-  }
+  };
 
-  sendMessage() {
+  handleChange = name => event => {
+    this.setState({
+      [name]: event.target.value
+    });
+  };
+
+  sendMessage = () => {
     // Arrange
     const chatId = this.getChatId();
-    const message = ReactDOM.findDOMNode(this.refs.messageDraft).value.trim();
+    const message = this.state.messageDraft;
     const timestamp = new Date();
 
     // Act
@@ -81,7 +88,11 @@ export default class ChatRoom extends Component {
         username: Meteor.user().username
       });
 
-      ReactDOM.findDOMNode(this.refs.messageDraft).value = "";
+      this.clearMessageDraft();
     }
-  }
+  };
+
+  clearMessageDraft = () => {
+    this.setState({ messageDraft: "" });
+  };
 }
