@@ -1,8 +1,7 @@
-import { Chats, Messages } from "../api/chats";
+import { Chats } from "/imports/api/chats/collection";
+
 import React, { Component } from "react";
-import Chat from "./Chat.js";
 import { Meteor } from "meteor/meteor";
-import ReactDOM from "react-dom";
 
 import Button from "@material-ui/core/Button";
 import TextField from "@material-ui/core/TextField";
@@ -14,6 +13,7 @@ import { NavLink } from "react-router-dom";
 export default class ChatList extends Component {
   state = {
     isOpen: false,
+    isJoiningDisabled: false,
     chatNameToJoin: ""
   };
 
@@ -29,6 +29,39 @@ export default class ChatList extends Component {
     });
   };
 
+  handleKeyPress = event => {
+    if (event.key === "Enter") {
+      this.handleJoinChat();
+    }
+  };
+
+  handleJoinChat = () => {
+    // Arrange
+    const userId = Meteor.userId();
+    const chatNameToJoin = this.state.chatNameToJoin;
+
+    // Act
+    // If given name is valid
+    if (!_.isEmpty(chatNameToJoin)) {
+      this.setState({
+        isJoiningDisabled: true
+      });
+
+      Meteor.call(
+        "chats.join",
+        {
+          title: chatNameToJoin
+        },
+        (error, result) => {
+          this.setState({
+            isJoiningDisabled: false,
+            chatNameToJoin: ""
+          });
+        }
+      );
+    }
+  };
+
   render() {
     const sideList = (
       <div>
@@ -39,6 +72,7 @@ export default class ChatList extends Component {
             value={this.state.name}
             onChange={this.handleChange("chatNameToJoin")}
             onKeyPress={this.handleKeyPress}
+            disabled={this.state.isJoiningDisabled}
             margin="normal"
           />
           <Button
@@ -46,6 +80,7 @@ export default class ChatList extends Component {
             color="primary"
             size="small"
             onClick={this.handleJoinChat}
+            disabled={this.state.isJoiningDisabled}
           >
             Join
           </Button>
@@ -78,44 +113,4 @@ export default class ChatList extends Component {
       </header>
     );
   }
-
-  handleKeyPress(event) {
-    if (event.key === "Enter") {
-      this.handleJoinChat();
-    }
-  }
-
-  handleJoinChat = () => {
-    // Arrange
-    const userId = Meteor.userId();
-    const chatNameToJoin = this.state.chatNameToJoin;
-
-    console.log("chatNameToJoin is " + chatNameToJoin);
-
-    // Act
-    // If given name is valid
-    if (!_.isEmpty(chatNameToJoin)) {
-      this.joinChat(chatNameToJoin, userId);
-    }
-  };
-
-  joinChat = (chatNameToJoin, userId) => {
-    // Find chat with given name
-    var chatToJoin = Chats.findOne({ title: chatNameToJoin });
-
-    // If chat exists, join
-    if (chatToJoin) {
-      if (!chatToJoin.users.includes(userId)) {
-        Chats.update(chatId, {
-          $set: { users: chatToJoin.users.push(userId) }
-        });
-      }
-      // Otherwise, create new chat
-    } else {
-      Chats.insert({
-        title: chatNameToJoin,
-        users: [userId]
-      });
-    }
-  };
 }

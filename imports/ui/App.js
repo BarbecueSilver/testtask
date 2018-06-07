@@ -1,7 +1,8 @@
 import React, { Component } from "react";
 import { withTracker } from "meteor/react-meteor-data";
 
-import { Chats, Messages } from "../api/chats.js";
+import { Chats } from "../api/chats/collection.js";
+import { Messages } from "../api/messages/collection.js";
 import ChatList from "./ChatList.js";
 
 import { Route, Switch, BrowserRouter } from "react-router-dom";
@@ -35,6 +36,9 @@ class App extends Component {
 }
 
 export default withTracker(() => {
+  Meteor.subscribe("chats.all");
+  Meteor.subscribe("messages.all");
+
   return {
     chats: Chats.find({}).fetch(),
     messages: Messages.find({}).fetch(),

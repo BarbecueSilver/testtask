@@ -1,5 +1,6 @@
 import { Meteor } from "meteor/meteor";
-import { Chats, Messages } from "../api/chats";
+import { Chats } from "/imports/api/chats/collection";
+import { Messages } from "/imports/api/messages/collection";
 import React, { Component } from "react";
 import Timestamp from "react-timestamp";
 
