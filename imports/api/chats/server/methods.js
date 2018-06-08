@@ -29,6 +29,6 @@ Meteor.methods({
   "chats.leave"({ title }) {
     check(title, String);
 
-    // TODO
+    // TODO: implement chats.leave
   }
 });

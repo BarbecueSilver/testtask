@@ -1,2 +1,2 @@
-import "/imports/api/chats/server";
-import "/imports/api/messages/server";
+//import "/imports/api/chats/server";
+//import "/imports/api/messages/server";
