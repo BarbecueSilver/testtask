@@ -39,12 +39,12 @@ class App extends Component {
 
 // TODO: move this into each file and reduce the subscription to the
 export default withTracker(() => {
-  //Meteor.subscribe("chats.all");
-  //Meteor.subscribe("messages.all");
+  Meteor.subscribe("chats.all");
+  Meteor.subscribe("messages.all");
 
   return {
-    /*chats: Chats.find({}).fetch(),
+    chats: Chats.find({}).fetch(),
     messages: Messages.find({}).fetch(),
-    currentUser: Meteor.user()*/
+    currentUser: Meteor.user()
   };
 })(App);

@@ -17,33 +17,34 @@ import { BrowserRouter } from "react-router-dom";
 
 class ChatsDrawer extends Component {
   render() {
-    //const {chats} = this.props;
+    const { chats } = this.props;
 
     return (
-      <div />
-      /*<BrowserRouter>
-                <List>
-                    {chats.map(chat =>
-                        <ListItem key={chat._id} component={Link} to={`/chats/${chat._id}`}>
-                            <ListItemText primary={chat.title} />
-                            <ListItemSecondaryAction>
-                                <IconButton aria-label="Comments">
-                                    <DeleteIcon />
-                                </IconButton>
-                            </ListItemSecondaryAction>
-                        </ListItem>
-                    )}
-                </List>
-            </BrowserRouter>*/
+      <BrowserRouter>
+        <List>
+          {chats.map(chat => (
+            <ListItem key={chat._id} component={Link} to={`/chats/${chat._id}`}>
+              <ListItemText primary={chat.title} />
+              <ListItemSecondaryAction>
+                <IconButton aria-label="Comments">
+                  <DeleteIcon />
+                </IconButton>
+              </ListItemSecondaryAction>
+            </ListItem>
+          ))}
+        </List>
+      </BrowserRouter>
     );
   }
 }
-/*
+
 ChatsDrawer.propTypes = {
-    chats: PropTypes.arrayOf(PropTypes.shape({
-        _id: PropTypes.string,
-        title: PropTypes.string
-    }))
-}*/
+  chats: PropTypes.arrayOf(
+    PropTypes.shape({
+      _id: PropTypes.string,
+      title: PropTypes.string
+    })
+  )
+};
 
 export default ChatsDrawer;
