@@ -13,7 +13,7 @@ class MessageSendForm extends Component {
 
     // Act
     // If draft has at least one character
-    if (!_.isEmpty(messageDraft)) {
+    if (messageDraft.length !== 0) {
       Meteor.call("messages.send", {
         chatId: chatId,
         draft: messageDraft

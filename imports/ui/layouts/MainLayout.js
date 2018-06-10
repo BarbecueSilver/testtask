@@ -24,6 +24,16 @@ const styles = {
   menuButton: {
     marginLeft: -12,
     marginRight: 20
+  },
+  mainContent: {
+    marginTop: 90,
+    marginLeft: 25,
+    marginRight: 25,
+    marginBottom: 90
+  },
+  bottomBar: {
+    bottom: 0,
+    position: "fixed"
   }
 };
 
@@ -43,7 +53,7 @@ class MainLayout extends Component {
 
     return (
       <div>
-        <AppBar position="static">
+        <AppBar>
           <Toolbar>
             {Meteor.userId() ? (
               <div>
@@ -65,9 +75,7 @@ class MainLayout extends Component {
                   <MenuIcon />
                 </IconButton>
               </div>
-            ) : (
-              ""
-            )}
+            ) : null}
 
             <Typography
               variant="title"
@@ -80,7 +88,7 @@ class MainLayout extends Component {
           </Toolbar>
         </AppBar>
 
-        {this.props.children}
+        <div style={styles.mainContent}>{this.props.children}</div>
       </div>
     );
   }

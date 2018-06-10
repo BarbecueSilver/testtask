@@ -1,21 +1,39 @@
 import React, { Component } from "react";
-import MuiThemeProvider from "material-ui/styles/MuiThemeProvider";
-
-import { Chats } from "../api/chats/collection.js";
-import { Messages } from "../api/messages/collection.js";
-
-import NoChatRoom from "./NoChatRoom";
-import ChatRoom from "./ChatRoom";
-
 import { Route, Switch, BrowserRouter } from "react-router-dom";
 import { Meteor } from "meteor/meteor";
 import { withTracker } from "meteor/react-meteor-data";
+
+import { MuiThemeProvider } from "@material-ui/core/styles";
+import CssBaseline from "@material-ui/core/CssBaseline";
+import { createMuiTheme } from "@material-ui/core/styles";
+import Typography from "@material-ui/core/Typography";
+
 import MainLayout from "./layouts/MainLayout";
+import NoChatRoom from "./NoChatRoom";
+import ChatRoom from "./ChatRoom";
+
+const theme = createMuiTheme({
+  palette: {
+    primary: {
+      light: "#757ce8",
+      main: "#3f50b5",
+      dark: "#002884",
+      contrastText: "#fff"
+    },
+    secondary: {
+      light: "#ff7961",
+      main: "#f44336",
+      dark: "#ba000d",
+      contrastText: "#000"
+    }
+  }
+});
 
 class App extends Component {
   render() {
     return (
-      <MuiThemeProvider>
+      <MuiThemeProvider theme={theme}>
+        <CssBaseline />
         <BrowserRouter>
           <MainLayout>
             <div>
@@ -27,7 +45,9 @@ class App extends Component {
                   </Switch>
                 </div>
               ) : (
-                ""
+                <div>
+                  <Typography>Please login.</Typography>
+                </div>
               )}
             </div>
           </MainLayout>
@@ -37,14 +57,8 @@ class App extends Component {
   }
 }
 
-// TODO: move this into each file and reduce the subscriptions of each collection
 export default withTracker(() => {
-  Meteor.subscribe("chats.all");
-  Meteor.subscribe("messages.all");
-
   return {
-    chats: Chats.find({}).fetch(),
-    messages: Messages.find({}).fetch(),
     currentUser: Meteor.user()
   };
 })(App);

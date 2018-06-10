@@ -10,6 +10,8 @@ import ListItemText from "@material-ui/core/ListItemText";
 
 import { Link } from "react-router-dom";
 import { Meteor } from "meteor/meteor";
+import { withTracker } from "meteor/react-meteor-data";
+import { Chats } from "../../api/chats/collection";
 
 class ListOfChats extends Component {
   handleLeaveChat = title => {
@@ -49,4 +51,10 @@ ListOfChats.propTypes = {
   )
 };
 
-export default ListOfChats;
+export default withTracker(() => {
+  Meteor.subscribe("chats.userHasJoined");
+
+  return {
+    chats: Chats.find({}).fetch()
+  };
+})(ListOfChats);

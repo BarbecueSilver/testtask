@@ -13,7 +13,7 @@ Meteor.methods({
     const timestamp = new Date();
 
     // Act
-    if (!_.isEmpty(draft)) {
+    if (draft.length !== 0) {
       Messages.insert({
         content: draft,
         chatId: chatId,

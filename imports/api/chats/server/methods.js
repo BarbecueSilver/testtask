@@ -10,25 +10,17 @@ Meteor.methods({
 
     // Arrange
     const userId = Meteor.userId();
-    // Find chat with given name
-    var chatToJoin = Chats.findOne({ title: title });
+    const chatToJoin = Chats.findOne({ title: title });
 
     // Act
     // If chat exists, join
     if (chatToJoin) {
-      if (!chatToJoin.users.includes(userId)) {
-        var updatedUsers = chatToJoin.users;
-
-        if (chatToJoin.users.length < 1) updatedUsers = [userId];
-        else updatedUsers.push(userId);
-
-        Chats.update(chatToJoin._id, {
-          $set: { users: updatedUsers }
-        });
-      }
+      Chats.update(chatToJoin._id, {
+        $addToSet: { users: userId }
+      });
       // Otherwise, create new chat
     } else {
-      var users = [userId];
+      const users = [userId];
 
       Chats.insert({
         title: title,
@@ -43,17 +35,11 @@ Meteor.methods({
 
     // Arrange
     const userId = Meteor.userId();
-    // Find chat with given name
-    var chatToLeave = Chats.findOne({ title: title });
+    const chatToLeave = Chats.findOne({ title: title });
 
     // Act
-    if (chatToLeave.users.includes(userId)) {
-      const users = chatToLeave.users;
-      var updatedUsers = users.filter(user => user !== userId);
-
-      Chats.update(chatToLeave._id, {
-        $set: { users: updatedUsers }
-      });
-    }
+    Chats.update(chatToLeave._id, {
+      $pull: { users: userId }
+    });
   }
 });

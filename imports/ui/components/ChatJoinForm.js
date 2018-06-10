@@ -10,7 +10,7 @@ class ChatJoinForm extends Component {
 
     // Act
     // If given name is valid
-    if (!_.isEmpty(chatNameToJoin)) {
+    if (chatNameToJoin.length !== 0) {
       Meteor.call("chats.join", {
         title: chatNameToJoin
       });
