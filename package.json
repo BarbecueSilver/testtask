@@ -10,12 +10,18 @@
     "@babel/runtime": "^7.0.0-beta.42",
     "@material-ui/core": "^1.2.0",
     "@material-ui/icons": "^1.1.0",
+    "bcrypt": "^2.0.1",
+    "material-ui": "^0.20.1",
     "meteor-node-stubs": "^0.3.2",
     "prop-types": "^15.6.1",
     "react": "^16.4.0",
     "react-dom": "^16.4.0",
     "react-router-dom": "^4.2.2",
-    "react-timestamp": "^4.4.0"
+    "react-timestamp": "^4.4.0",
+    "@storybook/react": "^3.4.6",
+    "@storybook/addon-actions": "^3.4.6",
+    "@storybook/addon-links": "^3.4.6",
+    "@storybook/addons": "^3.4.6"
   },
   "devDependencies": {
     "husky": "^0.14.3",
@@ -26,9 +32,9 @@
     "babel-preset-react": "^6.24.1",
     "babel-preset-stage-1": "^6.24.1",
     "babel-root-slash-import": "^1.1.0",
-    "@storybook/react": "^3.4.6",
-    "@storybook/addon-actions": "^3.4.6",
-    "@storybook/addon-links": "^3.4.6",
-    "@storybook/addons": "^3.4.6"
+    "@storybook/react": "^3.4.7",
+    "@storybook/addon-actions": "^3.4.7",
+    "@storybook/addon-links": "^3.4.7",
+    "@storybook/addons": "^3.4.7"
   }
 }
