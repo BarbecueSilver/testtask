@@ -1,5 +1,8 @@
 #login-dropdown-list {
-  left: -146px;
+  position: absolute;
+  top: 0px;
+  right: 0px;
+  left: auto;
 }
 
 #login-buttons .login-close-text {
